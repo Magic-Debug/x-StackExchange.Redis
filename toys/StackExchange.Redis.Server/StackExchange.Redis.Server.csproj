@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
     <Description>Basic redis server based on StackExchange.Redis</Description>
     <AssemblyTitle>StackExchange.Redis</AssemblyTitle>
     <AssemblyName>StackExchange.Redis.Server</AssemblyName>
@@ -13,6 +13,7 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Pipelines.Sockets.Unofficial\src\Pipelines.Sockets.Unofficial\Pipelines.Sockets.Unofficial.csproj" />
     <ProjectReference Include="..\..\src\StackExchange.Redis\StackExchange.Redis.csproj" />
     <PackageReference Include="System.Runtime.Caching" />
   </ItemGroup>
