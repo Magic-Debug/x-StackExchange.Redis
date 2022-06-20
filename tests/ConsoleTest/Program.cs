@@ -6,8 +6,8 @@ Stopwatch stopwatch = new Stopwatch();
 stopwatch.Start();
 
 var options = ConfigurationOptions.Parse("localhost");
-//options.SocketManager = SocketManager.ThreadPool;
-var connection = ConnectionMultiplexer.Connect(options);
+options.SocketManager = SocketManager.ThreadPool;
+var connection = ConnectionMultiplexer.Connect(options, new StreamWriter(Path.Combine(Environment.CurrentDirectory, "StackExchange.Redis.log")));
 
 var startTime = DateTime.UtcNow;
 var startCpuUsage = Process.GetCurrentProcess().TotalProcessorTime;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using StackExchange.Redis;
@@ -9,7 +10,7 @@ namespace TestConsole
     {
         public static async Task Main()
         {
-            var client = ConnectionMultiplexer.Connect("localhost");
+            var client = ConnectionMultiplexer.Connect("localhost", new StreamWriter(Path.Combine(Environment.CurrentDirectory, "StackExchange.Redis.log")));
             client.GetDatabase().Ping();
             var db = client.GetDatabase(0);
 

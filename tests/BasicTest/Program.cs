@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
@@ -60,7 +61,7 @@ namespace BasicTest
             // Pipelines.Sockets.Unofficial.SocketConnection.AssertDependencies();
 
             var options = ConfigurationOptions.Parse("127.0.0.1:6379");
-            connection = ConnectionMultiplexer.Connect(options);
+            connection = ConnectionMultiplexer.Connect(options, new StreamWriter(Path.Combine(Environment.CurrentDirectory, "StackExchange.Redis.log")));
             db = connection.GetDatabase(3);
 
             db.KeyDelete(GeoKey);
