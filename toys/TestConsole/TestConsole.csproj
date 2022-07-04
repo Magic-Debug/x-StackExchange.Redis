@@ -5,6 +5,7 @@
     <TargetFrameworks>net50</TargetFrameworks>
     <DefineConstants>SEV2</DefineConstants>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Computername)'=='OCHO' or '$(Computername)'=='SKINK'">

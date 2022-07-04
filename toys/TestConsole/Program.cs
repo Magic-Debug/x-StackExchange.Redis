@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Buffers;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Pipelines.Sockets.Unofficial;
 using Pipelines.Sockets.Unofficial.Arenas;
@@ -15,14 +17,47 @@ namespace TestConsole
     {
         public static async Task Main()
         {
-            int sizeOfint = Unsafe.SizeOf<int>();
-            int sizeOfstring = Unsafe.SizeOf<string>();
-            int sizeOfobject = Unsafe.SizeOf<object>();
-            int sizeOffloat = Unsafe.SizeOf<float>();
+            // SizeOf<T>如果T为引用类型，则返回值是引用本身的大小(等于sizeof(void*)) 
+            unsafe
+            {
+                int size = sizeof(void*);//8字节
+            }
+            int sizeOfMemoryInt = Unsafe.SizeOf<Memory<byte>>();//16字节
+            int sizeOfMemorydecimal = Unsafe.SizeOf<Memory<decimal>>();//16字节
+            int sizeOfIMemoryOwner = Unsafe.SizeOf<IMemoryOwner<int>>();//16字节
+
+            int sizeOfMemoryDateTime = Unsafe.SizeOf<DateTime>();//8字节
+
+            int sizeOfint = Unsafe.SizeOf<int>();//4
+            int sizeOfstring = Unsafe.SizeOf<string>();//8字节
+            int sizeOfobject = Unsafe.SizeOf<object>();//8字节
+            int sizeOffloat = Unsafe.SizeOf<float>();//4字节
+            int sizeOfdecimal = Unsafe.SizeOf<decimal>();//16字节
+            int sizeOfdouble = Unsafe.SizeOf<double>();//8字节
+
+            int sizeOfArrayBufferWriterdouble = Unsafe.SizeOf<ArrayBufferWriter<double>>();//8字节
 
             Arena arena = new Arena();
+            int sizeOfArena = Unsafe.SizeOf<Arena>();//8字节
             Sequence<int> seq = arena.Allocate<int>(1024);
+
+            Point xPoint = new Point(100, 100);
+            Point yPoint;
+            int sizeOfPoint = Marshal.SizeOf(xPoint);//8字节
+            sizeOfPoint = Marshal.SizeOf(typeof(Point));//8字节
+            IntPtr xPointPtr = Marshal.AllocHGlobal(Marshal.SizeOf(xPoint));
+            Marshal.StructureToPtr(xPoint, xPointPtr, false);
+            yPoint = (Point)Marshal.PtrToStructure(xPointPtr, typeof(Point));
+            Marshal.FreeHGlobal(xPointPtr);
+
+            int marshalSizeOf = Marshal.SizeOf(seq);
+            Marshal.SizeOf(typeof(Sequence));
+            int sizeOfSequence = Unsafe.SizeOf<Sequence>();//24
             OwnedArena<int> owned = arena.GetArena<int>();
+            int sizeOfOwnedArena = Unsafe.SizeOf<OwnedArena<int>>();//8
+
+            int sizeOfSequenceSegment = Unsafe.SizeOf<SequenceSegment<int>>();//8
+
 
             ArrayPool<byte> pool = ArrayPool<byte>.Create(4096, 16);
             ArrayPoolAllocator<byte> arrayPoolAllocator = new ArrayPoolAllocator<byte>(pool);

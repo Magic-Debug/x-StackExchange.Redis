@@ -8,6 +8,7 @@
     <PackageId>BasicTestBaseline</PackageId>
     <RuntimeIdentifiers>win7-x64</RuntimeIdentifiers>
     <DefineConstants>$(DefineConstants);TEST_BASELINE</DefineConstants>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

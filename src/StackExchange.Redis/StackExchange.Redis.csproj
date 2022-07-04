@@ -13,6 +13,7 @@
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <DefineConstants Condition="'$(TargetFramework)' != 'net461'">$(DefineConstants);VECTOR_SAFE</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' != 'net461' and '$(TargetFramework)' != 'net472' and '$(TargetFramework)' != 'netstandard2.0'">$(DefineConstants);UNIX_SOCKET</DefineConstants>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
