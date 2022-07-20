@@ -13,6 +13,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="SpanDemo.cs~RFf763d43.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Pipelines.Sockets.Unofficial\src\Pipelines.Sockets.Unofficial\Pipelines.Sockets.Unofficial.csproj" />
     <ProjectReference Include="..\..\src\StackExchange.Redis\StackExchange.Redis.csproj" />
   </ItemGroup>

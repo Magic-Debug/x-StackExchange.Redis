@@ -17,6 +17,11 @@ namespace TestConsole
     {
         public static async Task Main()
         {
+            int[] data = Enumerable.Range(0, 100).ToArray();
+            string text = string.Join(';', data);
+            SpanDemo.WorkWithAllocHGlobal();
+            SpanDemo.GetContentLength(text.ToCharArray());
+
             // SizeOf<T>如果T为引用类型，则返回值是引用本身的大小(等于sizeof(void*)) 
             unsafe
             {
