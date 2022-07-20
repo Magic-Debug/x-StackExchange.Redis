@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace KestrelRedisServer
@@ -27,6 +29,19 @@ namespace KestrelRedisServer
                         listenOptions.UseConnectionHandler<RedisConnectionHandler>();
                     });
 
-                }).UseStartup<Startup>();
+                })
+            .ConfigureLogging(factory =>
+           {
+               factory.AddConsole();
+               factory.AddDebug();
+               LogLevel logLevel = LogLevel.Debug;
+               factory.SetMinimumLevel(logLevel);
+               factory.AddFilter("Microsoft", LogLevel.Debug);
+           })
+           .UseSockets((SocketTransportOptions options) =>
+            {
+                options.IOQueueCount = 17;
+                options.NoDelay = false;
+            }).UseStartup<Startup>();
     }
 }
