@@ -9,14 +9,14 @@ namespace StackExchange.Redis.Server
 {
     public class MemoryCacheRedisServer : RedisServer
     {
-        public MemoryCacheRedisServer(TextWriter output = null) : base(1, output)
+        public MemoryCacheRedisServer(int databases = 11,TextWriter output = null) : base(databases, output)
             => CreateNewCache();
 
         private MemoryCache _cache;
 
         private void CreateNewCache()
         {
-            var old = _cache;
+            MemoryCache old = _cache;
             _cache = new MemoryCache(GetType().Name);
             if (old != null) old.Dispose();
         }
@@ -128,6 +128,7 @@ namespace StackExchange.Redis.Server
             }
         }
 
+        public override RedisClient CreateClient() => base.CreateClient();
         private Stack<RedisValue> GetStack(RedisKey key, bool create)
         {
             var stack = (Stack<RedisValue>)_cache[key];

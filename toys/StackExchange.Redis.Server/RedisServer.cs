@@ -12,11 +12,15 @@ namespace StackExchange.Redis.Server
         public static bool IsMatch(string pattern, string key) =>
             pattern == "*" || string.Equals(pattern, key, StringComparison.OrdinalIgnoreCase);
 
-        protected RedisServer(int databases = 16, TextWriter output = null) : base(output)
+        protected RedisServer(int databases = 11, TextWriter output = null) : base(output)
         {
-            if (databases < 1) throw new ArgumentOutOfRangeException(nameof(databases));
+            if (databases < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(databases));
+            }
+
             Databases = databases;
-            var config = ServerConfiguration;
+            RedisConfig config = ServerConfiguration;
             config["timeout"] = "0";
             config["slave-read-only"] = "yes";
             config["replica-read-only"] = "yes";
@@ -36,7 +40,10 @@ namespace StackExchange.Redis.Server
                     {
                         sb.Append("Database ").Append(i).Append(": ").Append(Dbsize(i)).AppendLine(" keys");
                     }
-                    catch { }
+                    catch {
+
+
+                    }
                 }
             }
         }
@@ -46,7 +53,7 @@ namespace StackExchange.Redis.Server
         protected virtual TypedRedisValue Sadd(RedisClient client, RedisRequest request)
         {
             int added = 0;
-            var key = request.GetKey(1);
+            RedisKey key = request.GetKey(1);
             for (int i = 2; i < request.Count; i++)
             {
                 if (Sadd(client.Database, key, request.GetValue(i)))
@@ -175,7 +182,7 @@ namespace StackExchange.Redis.Server
             if (stop < 0) stop = 0;
             else if (stop >= len) stop = len - 1;
 
-            var arr = TypedRedisValue.Rent(checked((int)((stop - start) + 1)), out var span);
+            TypedRedisValue arr = TypedRedisValue.Rent(checked((int)((stop - start) + 1)), out var span);
             LRange(client.Database, key, start, span);
             return arr;
         }
@@ -215,14 +222,14 @@ namespace StackExchange.Redis.Server
         [RedisCommand(3, "config", "get", LockFree = true)]
         protected virtual TypedRedisValue Config(RedisClient client, RedisRequest request)
         {
-            var pattern = request.GetString(2);
+            string pattern = request.GetString(2);
 
             OnUpdateServerConfiguration();
-            var config = ServerConfiguration;
-            var matches = config.CountMatch(pattern);
+            RedisConfig config = ServerConfiguration;
+            int matches = config.CountMatch(pattern);
             if (matches == 0) return TypedRedisValue.EmptyArray;
 
-            var arr = TypedRedisValue.Rent(2 * matches, out var span);
+            TypedRedisValue arr = TypedRedisValue.Rent(2 * matches, out var span);
             int index = 0;
             foreach (var pair in config.Wrapped)
             {
@@ -248,7 +255,7 @@ namespace StackExchange.Redis.Server
         protected virtual TypedRedisValue Exists(RedisClient client, RedisRequest request)
         {
             int count = 0;
-            var db = client.Database;
+            int db = client.Database;
             for (int i = 1; i < request.Count; i++)
             {
                 if (Exists(db, request.GetKey(i)))

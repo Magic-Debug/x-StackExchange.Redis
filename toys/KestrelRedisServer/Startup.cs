@@ -10,23 +10,25 @@ namespace KestrelRedisServer
 {
     public class Startup : IDisposable
     {
-        private readonly RespServer _server = new MemoryCacheRedisServer();
+        private static RespServer RespServer => new MemoryCacheRedisServer(10);
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
-            => services.Add(new ServiceDescriptor(typeof(RespServer), _server));
+        {
+            services.Add(new ServiceDescriptor(typeof(RespServer), RespServer));
+        }
 
         public void Dispose()
         {
-            _server.Dispose();
+            RespServer.Dispose();
             GC.SuppressFinalize(this);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
         {
-            _server.Shutdown.ContinueWith((t, s) =>
+            RespServer.Shutdown.ContinueWith((t, s) =>
             {
                 try
                 {   // if the resp server is shutdown by a client: stop the kestrel server too
@@ -38,8 +40,15 @@ namespace KestrelRedisServer
                 catch { /* Don't go boom on shutdown */ }
             }, lifetime);
 
-            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
-            app.Run(context => context.Response.WriteAsync(_server.GetStats()));
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            app.Run(handler: context =>
+            {
+                string stat = RespServer.GetStats();
+                return context.Response.WriteAsync(stat);
+            });
         }
     }
 }
